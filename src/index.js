@@ -25,9 +25,8 @@ router.get('/api', (ctx, next)=> {
     ctx.body = Agenda.name;
 });
 
-router.post('/api/login', (ctx, next)=> {
-    let userSimpleInfo = ctx.request.body;
-
+router.get('/api/login', (ctx, next)=> {
+    let userSimpleInfo = ctx.query;
     // if succeed to login
     if (Agenda.storage.userArray.some((user)=> {
             return userSimpleInfo.name === user.name && userSimpleInfo.password === user.password;
@@ -35,15 +34,15 @@ router.post('/api/login', (ctx, next)=> {
         console.log(`@${userSimpleInfo.name} log in!`);
         Agenda.name = userSimpleInfo.name;
         Agenda.password = userSimpleInfo.password;
-        ctx.body = '<p>you now have been logged in!</p>';
+        ctx.body = `<h3>I'm ${Agenda.name}.</h3>`;
     } else {
-        ctx.body = '<p>name or password is wrong!</p>';
+        ctx.body = 'no-log';
     }
 });
 
 router.get('/am-i-logged', (ctx, next)=> {
     if (Agenda.isRunning())
-        ctx.body = '<h3>Welcome!' + Agenda.name + '</h3>';
+        ctx.body = `<h3>I'm ${Agenda.name}.</h3>`;
     else
         ctx.body = 'no-log';
 });
@@ -59,7 +58,7 @@ router.get('/api/operation', (ctx, next)=> {
                 break;
             case 'dc':
                 Agenda.deleteAgendaAccount();
-                ctx.body = '<p>your account has been deleted!!</p>';
+                ctx.body = 'your account has been deleted!!';
                 break;
             case 'lu':
                 ctx.body = Agenda.listAllUsers();
@@ -99,7 +98,7 @@ router.get('/api/operation', (ctx, next)=> {
             case 'da':
                 break;
             default:
-                ctx.body = '<p>Your query string is not Valid</p>'
+                ctx.body = 'Your query string is not Valid!'
         }
     else return next();
 });
@@ -110,7 +109,7 @@ app.use(co.wrap(function *(ctx, next) {
     if (Agenda.isRunning()) {
         yield next();
     } else
-        ctx.body = '<h2>you don\'t log in, please go to the / and log</h2>';
+        ctx.body = '[fetch] you don\'t log in, please go to the / and log';
 }));
 app.listen(PORT);
 console.log(`The server is running at port: ${PORT}`);

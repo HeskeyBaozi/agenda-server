@@ -5,43 +5,61 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <link rel="stylesheet" href="./css/main.css">
     <title>Agenda Server Test</title>
 </head>
 <body>
-<div id="log">
-    <form method="post" action="/api/login" id="fm1">
-        <label>UserName<input id="fm1-username" type="text" name="name"/></label>
-        <br/>
-        <label>PassWord<input id="fm1-password" type="text" name="password"/></label>
-        <br/>
-        <button id="fm1-submit" type="submit">Submit</button>
-    </form>
-</div>
+<header class="header container-fluid">
+    <main>
+        <h1 class="header-headline">Agenda Server Test Page</h1>
+        <h2 class="header-lead">Based on Koa v2.x<br/> by HeskeyBaozi, SYSU Software Engineering 2015, 15331097</h2>
+        <div class="header-action">
 
-<div id="t1">
-    <h2>Query String Config</h2>
-    <form id="fm2" action="get">
-        <label>
-            <span>Type:</span>
-            <select name="type" id="select-type">
-                <option value="lu">所有用户</option>
-                <option value="la">所有会议</option>
-                <option value="las">所有是Sponsor的会议</option>
-                <option value="lap">所有是Participator的会议</option>
-            </select>
-        </label>
-    </form>
+        </div>
+    </main>
+</header>
+<section class="container">
+    <section id="log" class="row text-center">
+        <form method="post" action="/api/login" id="fm1" class="form-inline text-center">
+            <label class="form-group">UserName: <input class="form-control type=" text" name="name"/></label>
+            <label class="form-group">PassWord: <input class="form-control type=" text" name="password"/></label>
+            <a href="#" id="fm1-submit" type="submit" class="btn">Submit</a>
+        </form>
+    </section>
 
-    <button id="t1-submit">Fetch</button>
+    <section id="t1" class="row">
+        <div class="wrap">
+            <h2 class="section-header">Method: GET with QueryString</h2>
+            <div id="t1-r" class="well">
+                // The Result will replace here!
+                <br/>
+                // Please make sure you have been logged on.
+            </div>
+            <form id="fm2" class="form-inline text-center" action="get">
+                <label class="form-group">
+                    Type:
+                    <select name="type" id="select-type" class="form-control">
+                        <option value="lu">list all users</option>
+                        <option value="la">list all meetings</option>
+                        <option value="las">list all Sponsor meetings</option>
+                        <option value="lap">list all Participator meetings</option>
+                    </select>
+                </label>
+                <a href="#" class="btn" id="t1-submit">Fetch</a>
+            </form>
+        </div>
+    </section>
+</section>
 
-    <div id="t1-r">
-        结果将会展示在这里
-    </div>
-</div>
 
 <script src="js/jquery.min.js"></script>
 <script>
     'use strict';
+
+    /**
+     * [Login] login area
+     */
     fetch('/am-i-logged').then(data=> {
         return data.text();
     }).then(text=> {
@@ -49,7 +67,23 @@
             $('#log').html(text);
     });
 
-    $('#t1-submit').click(()=> {
+    $('#fm1-submit').click((e)=> {
+        e.preventDefault();
+        let queryString = $('#fm1').serialize();
+        console.log(queryString);
+        fetch(`/api/login?${queryString}`).then(res=>res.text())
+                .then(text=> {
+                    if (text !== 'no-log') {
+                        $('#log').html(text);
+                    }
+                });
+    });
+
+    /**
+     * [test 1] Method: GET with QueryString
+     */
+    $('#t1-submit').click((e)=> {
+        e.preventDefault();
         let queryString = $('#fm2').serialize();
         fetch(`/api/operation?${queryString}`).then(res=> {
             return res.text();
