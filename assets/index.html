@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Agenda Server Test</title>
+</head>
+<body>
+<div id="log">
+    <form method="post" action="/api/login" id="fm1">
+        <label>UserName<input id="fm1-username" type="text" name="name"/></label>
+        <br/>
+        <label>PassWord<input id="fm1-password" type="text" name="password"/></label>
+        <br/>
+        <button id="fm1-submit" type="submit">Submit</button>
+    </form>
+</div>
+
+<div id="t1">
+    <h2>Query String Config</h2>
+    <form id="fm2" action="get">
+        <label>
+            <span>Type:</span>
+            <select name="type" id="select-type">
+                <option value="lu">所有用户</option>
+                <option value="la">所有会议</option>
+                <option value="las">所有是Sponsor的会议</option>
+                <option value="lap">所有是Participator的会议</option>
+            </select>
+        </label>
+    </form>
+
+    <button id="t1-submit">Fetch</button>
+
+    <div id="t1-r">
+        结果将会展示在这里
+    </div>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script>
+    'use strict';
+    fetch('/am-i-logged').then(data=> {
+        return data.text();
+    }).then(text=> {
+        if (text !== 'no-log')
+            $('#log').html(text);
+    });
+
+    $('#t1-submit').click(()=> {
+        let queryString = $('#fm2').serialize();
+        fetch(`/api/operation?${queryString}`).then(res=> {
+            return res.text();
+        }).then(text=> {
+            $('#t1-r').html(text);
+        }).catch(err=> {
+            $('#t1-r').html(err);
+        });
+    });
+</script>
+</body>
+</html>
