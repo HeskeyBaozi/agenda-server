@@ -1,0 +1,30 @@
+{
+  "name": "agenda-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HeskeyBaozi/agenda-server.git"
+  },
+  "author": "Heskey Baozi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HeskeyBaozi/agenda-server/issues"
+  },
+  "homepage": "https://github.com/HeskeyBaozi/agenda-server#readme",
+  "dependencies": {
+    "co": "^4.6.0",
+    "jquery": "^3.1.0",
+    "koa": "^2.0.0",
+    "koa-bodyparser": "^3.2.0",
+    "koa-router": "^7.0.1",
+    "koa-static": "^3.0.0"
+  },
+  "devDependencies": {
+    "koa-logger": "^2.0.0"
+  }
+}
