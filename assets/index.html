@@ -23,12 +23,53 @@
     <section id="log" class="row text-center">
         <form method="post" action="/api/login" id="fm1" class="form-inline text-center">
             <label class="form-group">UserName:
-                <input class="form-control type=" text" name="name" value="Peter"/>
+                <input class="form-control" type="text" name="name" value="Peter"/>
             </label>
             <label class="form-group">PassWord:
-                <input class="form-control type=" text" name="password" value="peter"/>
+                <input class="form-control" type="text" name="password" value="peter"/>
             </label>
             <a href="#" id="fm1-submit" type="submit" class="btn">Submit</a>
+        </form>
+    </section>
+
+    <section id="section-register" class="row">
+        <h2 class="section-header">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> User Register
+        </h2>
+        <form method="post" action="/api/login" id="fm-register" class="form-inline text-center">
+            <label class="form-group">UserName:
+                <input class="form-control" type="text" name="name" value="Peter"/>
+            </label>
+            <label class="form-group">PassWord:
+                <input class="form-control" type="text" name="password" value="peter"/>
+            </label>
+            <label class="form-group">Email:
+                <input class="form-control" type="text" name="email"/>
+            </label>
+            <label class="form-group">Phone:
+                <input class="form-control" type="text" name="phone"/>
+            </label>
+        </form>
+        <div class="text-center">
+            <br/>
+            <a href="#" id="fm-register-submit" type="submit" class="btn">Fetch</a>
+        </div>
+
+    </section>
+
+    <section id="section-user" class="row">
+        <h2 class="section-header">
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> User Operation
+        </h2>
+        <form action="GET" id="fm-user" class="form-inline text-center">
+            <label class="form-group">
+                Type:
+                <select name="type" id="fm-user-select" class="form-control">
+                    <option value="o">Log out Agenda</option>
+                    <option value="dc">Delete Agenda account</option>
+                </select>
+            </label>
+            <a href="#" class="btn" id="fm-user-submit">Fetch</a>
         </form>
     </section>
 
@@ -122,7 +163,8 @@
                 </div>
 
 
-                <label id="t3-replace-label" class="col-sm-2 control-label" for="query-title-input">Meeting Title:</label>
+                <label id="t3-replace-label" class="col-sm-2 control-label" for="query-title-input">Meeting
+                    Title:</label>
                 <div id="t3-replace-input" class="col-sm-6">
                     <input class="form-control" type="text" name="title"
                            id="query-title-input" value="How to learn Javascript"/>

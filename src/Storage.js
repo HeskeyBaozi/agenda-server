@@ -12,6 +12,7 @@ class Storage {
         if (isEmpty(this.userArray)) {
             console.log(`[read] User succeed to sync from ${Path.User}`);
             this.userArray = this.readFromFile(Path.User);
+            console.log(this.userArray);
         }
 
         if (isEmpty(this.meetingArray)) {
@@ -27,7 +28,7 @@ class Storage {
 
         console.log(`[write] JSON.stringfy = ${JSON.stringify(this.meetingArray)}`);
         this.writeToFile(Path.Meeting, this.meetingArray).then(()=> {
-            console.log(`[sync] User succeed to sync into ${Path.User}`);
+            console.log(`[sync] Meeting succeed to sync into ${Path.Meeting}`);
         });
     }
 

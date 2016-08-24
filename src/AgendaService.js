@@ -1,10 +1,24 @@
 'use strict';
 const Storage = require('./Storage.js');
 const Meeting = require('./Meeting.js');
+const User = require('./User.js');
 const listTypes = require('./Type.js').listMeetingsTypes;
 
 class AgendaService {
     constructor() {
+    }
+
+    createUser(userLike) {
+        if (this.storage.userArray.every(storageUser=> {
+                return storageUser.name !== userLike.name;
+            })) {
+            let user = new User(userLike.name,
+                userLike.password, userLike.email, userLike.phone);
+            this.storage.userArray.push(user);
+            this.storage.sync();
+            return user;
+        }
+        return 'failed';
 
     }
 
@@ -13,14 +27,25 @@ class AgendaService {
     }
 
     logOut() {
-        this.name = '';
-        this.password = '';
+        try {
+            this.name = '';
+            this.password = '';
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
     }
 
     deleteAgendaAccount() {
         this.storage.userArray = this.storage.userArray.filter((user)=> {
             return user.name !== this.name;
         });
+        this.storage.meetingArray = this.storage.meetingArray.filter(meeting=> {
+            return meeting.sponsor !== this.name && meeting.participators.every(name=>name !== this.name);
+        });
+        this.storage.sync();
+        return this.logOut();
     }
 
     listAllUsers() {
@@ -30,8 +55,14 @@ class AgendaService {
     createMeeting(queryObj) {
         if (queryObj['participators[]'] && Array.isArray(queryObj['participators[]'])) {
             queryObj.participators = queryObj['participators[]'];
-        } else
+        } else if (queryObj['participators[]'] && typeof queryObj['participators[]'] === 'string') {
+            queryObj.participators = [].concat(queryObj['participators[]']);
+        }
+        else{
+            console.log(queryObj);
             return '[error] The participators is not a array.';
+        }
+
 
         let SponsorNotInParticipator = queryObj.participators.every(participatorName=>this.name !== participatorName);
         if (typeof queryObj.startDate === 'string' && typeof queryObj.endDate === 'string') {
@@ -106,7 +137,6 @@ class AgendaService {
                             return name === relatedName;
                         });
                 });
-                console.log(result[0].startDate);
                 return result;
             case listTypes.Sponsor:
                 return this.storage.meetingArray.filter(meeting=> {

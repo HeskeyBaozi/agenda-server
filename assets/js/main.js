@@ -6,20 +6,70 @@
 fetch('/am-i-logged').then(data=> {
     return data.text();
 }).then(text=> {
-    if (text !== 'no-log')
+    if (text !== 'no-log') {
         $('#log').html(text);
+        $('#section-user').show();
+        $('#section-register').hide();
+    } else {
+        $('#section-user').hide();
+    }
 });
+
+const login = logInfo=> {
+    return fetch(`/api/login?${logInfo}`).then(res=>res.text())
+        .then(text=> {
+            if (text !== 'no-log') {
+                $('#log').html(text);
+                $('#section-user').show();
+                $('#section-register').hide();
+            }
+        });
+};
 
 $('#fm1-submit').click((e)=> {
     e.preventDefault();
     let queryString = $('#fm1').serialize();
-    fetch(`/api/login?${queryString}`).then(res=>res.text())
-        .then(text=> {
-            if (text !== 'no-log') {
-                $('#log').html(text);
-            }
-        });
+    login(queryString);
 });
+
+/**
+ * [Register] user register
+ */
+$('#fm-register-submit').click(e=> {
+    e.preventDefault();
+    let queryString = $('#fm-register').serialize();
+    fetch(`/api/register?${queryString}`)
+        .then(res=>res.json())
+        .then(json=> {
+            login($.param(json));
+        }).catch(e=> {
+        alert(`Fail to create!`);
+    });
+});
+
+/**
+ * [user] user operation
+ */
+$('#fm-user-submit').click(e=> {
+    e.preventDefault();
+    let queryString = $('#fm-user').serialize();
+    fetch(`/api/operation?${queryString}`)
+        .then(res=>res.text())
+        .then(text=> {
+            console.log(`[log out] you have logged out!`);
+            $('#log').html(text);
+            $('#fm1-submit').click((e)=> {
+                e.preventDefault();
+                let queryString = $('#fm1').serialize();
+                login(queryString);
+            });
+            $('#section-user').hide();
+            $('#section-register').show();
+        }).catch(e=> {
+        console.log(e);
+    });
+});
+
 
 /**
  * [test 1] Method: GET with QueryString

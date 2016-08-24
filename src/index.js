@@ -10,6 +10,11 @@ const bodyParser = require('koa-bodyparser');
 const AgendaService = require('./AgendaService.js');
 const Action = require('./Type.js').Action;
 const PORT = 3000;
+const logHTML = `<form method="post" action="/api/login" id="fm1" class="form-inline text-center">
+    <label class="form-group">UserName: <input class="form-control" type="text" name="name"/></label>
+    <label class="form-group">PassWord: <input class="form-control" type="text" name="password"/></label>
+    <a href="#" id="fm1-submit" type="submit" class="btn">Submit</a>
+</form>`;
 
 const listTypes = require('./Type.js').listMeetingsTypes;
 
@@ -29,13 +34,22 @@ router.get('/api', (ctx, next)=> {
     ctx.body = Agenda.name;
 });
 
+router.get('/api/register', (ctx, next)=> {
+    if (Agenda.isRunning()) {
+        ctx.body = 'You have been logged in!';
+    } else {
+        let registerInfo = ctx.query;
+        ctx.body = Agenda.createUser(registerInfo);
+    }
+});
+
 router.get('/api/login', (ctx, next)=> {
     let userSimpleInfo = ctx.query;
     // if succeed to login
     if (Agenda.storage.userArray.some((user)=> {
             return userSimpleInfo.name === user.name && userSimpleInfo.password === user.password;
         })) {
-        console.log(`@${userSimpleInfo.name} log in!`);
+        console.log(`[Login] @${userSimpleInfo.name} log in!`);
         Agenda.name = userSimpleInfo.name;
         Agenda.password = userSimpleInfo.password;
         ctx.body = `<h3>I'm ${Agenda.name}.</h3>`;
@@ -56,13 +70,14 @@ router.get('/api/operation', (ctx, next)=> {
     if (Agenda.isRunning())
         switch (ctx.query['type']) {
             case 'o':
-                Agenda.logOut();
-                ctx.body = '<p>succeed to log out !!</p>' +
-                    '<p>Please go to the / to log in again!</p>';
+                if (Agenda.logOut()) {
+                    ctx.body = logHTML;
+                }
                 break;
             case 'dc':
-                Agenda.deleteAgendaAccount();
-                ctx.body = 'your account has been deleted!!';
+                if (Agenda.deleteAgendaAccount()) {
+                    ctx.body = logHTML + '<br/>your account has been deleted!!';
+                }
                 break;
             case 'lu':
                 ctx.body = Agenda.listAllUsers();
