@@ -1,4 +1,35 @@
 'use strict';
+/**
+ * baffle
+ */
+
+const characters = [
+    '\u2588',
+    '\u2593',
+    '\u2592',
+    '\u2591',
+    '\u2588',
+    '\u2593',
+    '\u2592',
+    '\u2591',
+    '\u2588',
+    '\u2593',
+    '\u2592',
+    '\u2591',
+    '\u003c',
+    '\u003e',
+    '\u002f'
+];
+new Promise((resolve, reject)=> {
+    setTimeout(()=> {
+        resolve('.header-headline');
+    }, 1000);
+}).then((str)=> {
+    new baffle(str, {
+        characters,
+        speed: 50
+    }).reveal(4000);
+});
 
 /**
  * [Login] login area

@@ -1,7 +1,7 @@
 'use strict';
 const Storage = require('./Storage.js');
-const Meeting = require('./Meeting.js');
-const User = require('./User.js');
+const Meeting = require('./Component/Meeting.js');
+const User = require('./Component/User.js');
 const listTypes = require('./Type.js').listMeetingsTypes;
 
 class AgendaService {

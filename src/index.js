@@ -7,22 +7,19 @@ const server = require('koa-static');
 const logger = require('koa-logger');
 const router = require('koa-router')();
 const bodyParser = require('koa-bodyparser');
-const AgendaService = require('./AgendaService.js');
-const Action = require('./Type.js').Action;
-const PORT = 3000;
-const logHTML = `<form method="post" action="/api/login" id="fm1" class="form-inline text-center">
-    <label class="form-group">UserName: <input class="form-control" type="text" name="name"/></label>
-    <label class="form-group">PassWord: <input class="form-control" type="text" name="password"/></label>
-    <a href="#" id="fm1-submit" type="submit" class="btn">Submit</a>
-</form>`;
 
+const logHTML = require('./Type.js').logHTML;
 const listTypes = require('./Type.js').listMeetingsTypes;
 
 
 let app = new Koa();
+const AgendaService = require('./AgendaService.js');
 let Agenda = new AgendaService();
 
-
+/**
+ * APP Config
+ */
+const PORT = 3000;
 app.use(bodyParser());
 app.use(logger());
 
@@ -30,10 +27,17 @@ app.use(logger());
 /**
  * ========================  router  ========================
  */
+
+/**
+ * return the current account name
+ */
 router.get('/api', (ctx, next)=> {
     ctx.body = Agenda.name;
 });
 
+/**
+ * create a user
+ */
 router.get('/api/register', (ctx, next)=> {
     if (Agenda.isRunning()) {
         ctx.body = 'You have been logged in!';
@@ -43,6 +47,9 @@ router.get('/api/register', (ctx, next)=> {
     }
 });
 
+/**
+ * user login
+ */
 router.get('/api/login', (ctx, next)=> {
     let userSimpleInfo = ctx.query;
     // if succeed to login
@@ -58,6 +65,9 @@ router.get('/api/login', (ctx, next)=> {
     }
 });
 
+/**
+ * every time fresh the page, check if you have logged in
+ */
 router.get('/am-i-logged', (ctx, next)=> {
     console.log('[receive] /am-i-logged');
     if (Agenda.isRunning())
@@ -66,6 +76,9 @@ router.get('/am-i-logged', (ctx, next)=> {
         ctx.body = 'no-log';
 });
 
+/**
+ * User general operation
+ */
 router.get('/api/operation', (ctx, next)=> {
     if (Agenda.isRunning())
         switch (ctx.query['type']) {

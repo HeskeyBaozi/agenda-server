@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('fs');
-const Meeting = require('./Meeting.js');
-const User = require('./User.js');
+const Meeting = require('./Component/Meeting.js');
+const User = require('./Component/User.js');
 const Path = {
     User: './json/User.json',
     Meeting: './json/Meeting.json'
