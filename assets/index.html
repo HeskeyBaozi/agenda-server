@@ -22,77 +22,127 @@
 <section class="container">
     <section id="log" class="row text-center">
         <form method="post" action="/api/login" id="fm1" class="form-inline text-center">
-            <label class="form-group">UserName: <input class="form-control type=" text" name="name"/></label>
-            <label class="form-group">PassWord: <input class="form-control type=" text" name="password"/></label>
+            <label class="form-group">UserName:
+                <input class="form-control type=" text" name="name" value="Peter"/>
+            </label>
+            <label class="form-group">PassWord:
+                <input class="form-control type=" text" name="password" value="peter"/>
+            </label>
             <a href="#" id="fm1-submit" type="submit" class="btn">Submit</a>
         </form>
     </section>
 
     <section id="t1" class="row">
-        <div class="wrap">
-            <h2 class="section-header">Method: GET with QueryString</h2>
-            <div id="t1-r" class="well">
-                // The Result will replace here!
-                <br/>
-                // Please make sure you have been logged on.
-            </div>
-            <form id="fm2" class="form-inline text-center" action="get">
-                <label class="form-group">
-                    Type:
-                    <select name="type" id="select-type" class="form-control">
-                        <option value="lu">list all users</option>
-                        <option value="la">list all meetings</option>
-                        <option value="las">list all Sponsor meetings</option>
-                        <option value="lap">list all Participator meetings</option>
-                    </select>
-                </label>
-                <a href="#" class="btn" id="t1-submit">Fetch</a>
-            </form>
+        <h2 class="section-header">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Method: GET with QueryString
+        </h2>
+        <div id="t1-r" class="well">
+            // The Result will replace here!
+            <br/>
+            // Please make sure you have been logged on.
         </div>
+        <form id="t1-fm" class="form-inline text-center" action="get">
+            <label class="form-group">
+                Type:
+                <select name="type" class="form-control">
+                    <option value="lu">list all users</option>
+                    <option value="la">list all meetings</option>
+                    <option value="las">list all Sponsor meetings</option>
+                    <option value="lap">list all Participator meetings</option>
+                </select>
+            </label>
+            <a href="#" class="btn" id="t1-submit">Fetch</a>
+        </form>
     </section>
+
+    <section id="t2" class="row">
+        <h2 class="section-header">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create Meeting
+        </h2>
+        <div id="t2-r" class="well">
+            // The Result will replace here!
+            <br/>
+            // Please make sure you have been logged on.
+        </div>
+        <form id="t2-fm" class="form-horizontal" action="get">
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="title-input">Meeting Title:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" name="title"
+                           id="title-input" value="How to learn Javascript"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="participator-input">Participators:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" name="participators"
+                           id="participator-input"
+                           value="Mary,Tom,Bob"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="start-date-input">Start Date</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="startDate"
+                           id="start-date-input" value="2016-08-08 18:30:00"/>
+                </div>
+                <label class="col-sm-2 control-label" for="start-end-input">End Date</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="endDate"
+                           id="start-end-input" value="2016-08-08 19:30:00"/>
+                </div>
+
+
+            </div>
+            <div class="form-group text-center">
+                <a href="#" class="btn" id="t2-submit">Fetch</a>
+            </div>
+        </form>
+    </section>
+
+    <section id="t3" class="row">
+        <h2 class="section-header">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Query Meeting
+        </h2>
+        <div id="t3-r" class="well">
+            // The Result will replace here!
+            <br/>
+            // Please make sure you have been logged on.
+        </div>
+        <form id="t3-fm" class="form-horizontal" action="get">
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="t3-type-select">Type:</label>
+                <div class="col-sm-3">
+                    <select id="t3-type-select" name="type" class="form-control">
+                        <option value="qm">query by title</option>
+                        <option value="qt">query by time interval</option>
+                    </select>
+                </div>
+
+
+                <label id="t3-replace-label" class="col-sm-2 control-label" for="query-title-input">Meeting Title:</label>
+                <div id="t3-replace-input" class="col-sm-6">
+                    <input class="form-control" type="text" name="title"
+                           id="query-title-input" value="How to learn Javascript"/>
+                </div>
+            </div>
+
+            <div class="form-group text-center">
+                <a href="#" class="btn" id="t3-submit">Fetch</a>
+            </div>
+        </form>
+    </section>
+
+    <footer class="row">
+        This is footer...
+    </footer>
+
 </section>
 
 
 <script src="js/jquery.min.js"></script>
-<script>
-    'use strict';
-
-    /**
-     * [Login] login area
-     */
-    fetch('/am-i-logged').then(data=> {
-        return data.text();
-    }).then(text=> {
-        if (text !== 'no-log')
-            $('#log').html(text);
-    });
-
-    $('#fm1-submit').click((e)=> {
-        e.preventDefault();
-        let queryString = $('#fm1').serialize();
-        console.log(queryString);
-        fetch(`/api/login?${queryString}`).then(res=>res.text())
-                .then(text=> {
-                    if (text !== 'no-log') {
-                        $('#log').html(text);
-                    }
-                });
-    });
-
-    /**
-     * [test 1] Method: GET with QueryString
-     */
-    $('#t1-submit').click((e)=> {
-        e.preventDefault();
-        let queryString = $('#fm2').serialize();
-        fetch(`/api/operation?${queryString}`).then(res=> {
-            return res.text();
-        }).then(text=> {
-            $('#t1-r').html(text);
-        }).catch(err=> {
-            $('#t1-r').html(err);
-        });
-    });
-</script>
+<script src="./js/main.js"></script>
 </body>
 </html>

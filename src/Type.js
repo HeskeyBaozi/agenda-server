@@ -4,6 +4,12 @@ const actionTypes = {
     default: 'DEFAULT'
 };
 
+const listMeetingsTypes = {
+    All: 'ALL',
+    Sponsor: 'SPONSOR',
+    Participator: 'PARTICIPATOR'
+};
+
 class Action {
     constructor() {
         this.type = actionTypes.default;
@@ -11,5 +17,5 @@ class Action {
 }
 
 module.exports = {
-    Action, actionTypes
+    Action, actionTypes, listMeetingsTypes
 };

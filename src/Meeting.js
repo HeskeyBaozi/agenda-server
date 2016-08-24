@@ -9,10 +9,24 @@ class Meeting {
         this.title = title;
     }
 
-    isInParticipators(queryName) {
-        return this.participators.some((participatorName)=> {
-            return participatorName === queryName;
-        });
+    get startDate() {
+        if (this._startDate instanceof Date)
+            return this._startDate;
+        return new Date(this._startDate);
+    }
+
+    set startDate(newStartDate) {
+        this._startDate = newStartDate;
+    }
+
+    get endDate() {
+        if (this._endDate instanceof Date)
+            return this._endDate;
+        return new Date(this._endDate);
+    }
+
+    set endDate(newEndDate) {
+        this._endDate = newEndDate;
     }
 }
 

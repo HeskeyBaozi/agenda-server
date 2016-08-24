@@ -2,16 +2,33 @@
 const fs = require('fs');
 const Meeting = require('./Meeting.js');
 const User = require('./User.js');
+const Path = {
+    User: './json/User.json',
+    Meeting: './json/Meeting.json'
+};
 
 class Storage {
     constructor() {
         if (isEmpty(this.userArray)) {
-            this.userArray = this.readFromFile('./json/User.json');
+            console.log(`[read] User succeed to sync from ${Path.User}`);
+            this.userArray = this.readFromFile(Path.User);
         }
 
         if (isEmpty(this.meetingArray)) {
-            this.meetingArray = this.readFromFile('./json/Meeting.json');
+            console.log(`[read] Meeting succeed to sync from ${Path.Meeting}`);
+            this.meetingArray = this.readFromFile(Path.Meeting).map(convertToMeeting);
         }
+    }
+
+    sync() {
+        this.writeToFile(Path.User, this.userArray).then(()=> {
+            console.log(`[sync] User succeed to sync into ${Path.User}`);
+        });
+
+        console.log(`[write] JSON.stringfy = ${JSON.stringify(this.meetingArray)}`);
+        this.writeToFile(Path.Meeting, this.meetingArray).then(()=> {
+            console.log(`[sync] User succeed to sync into ${Path.User}`);
+        });
     }
 
     writeToFile(path, data) {
@@ -35,6 +52,13 @@ class Storage {
 Storage.prototype.userArray = [];
 Storage.prototype.meetingArray = [];
 Storage.prototype.isDirty = false;
+
+function convertToMeeting(meetingLike) {
+    console.log(meetingLike);
+    return new Meeting(meetingLike.sponsor, meetingLike.participators,
+        meetingLike._startDate, meetingLike._endDate, meetingLike.title);
+}
+
 
 function isEmpty(array) {
     return !array.length;

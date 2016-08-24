@@ -8,19 +8,23 @@ const logger = require('koa-logger');
 const router = require('koa-router')();
 const bodyParser = require('koa-bodyparser');
 const AgendaService = require('./AgendaService.js');
-const Action = require('./Action.js').Action;
-const PORT = 2333;
+const Action = require('./Type.js').Action;
+const PORT = 3000;
+
+const listTypes = require('./Type.js').listMeetingsTypes;
 
 
 let app = new Koa();
 let Agenda = new AgendaService();
 
-app.use(logger());
+
 app.use(bodyParser());
-app.use(server('./assets'));
+app.use(logger());
 
 
-// ========================  router  ========================
+/**
+ * ========================  router  ========================
+ */
 router.get('/api', (ctx, next)=> {
     ctx.body = Agenda.name;
 });
@@ -41,6 +45,7 @@ router.get('/api/login', (ctx, next)=> {
 });
 
 router.get('/am-i-logged', (ctx, next)=> {
+    console.log('[receive] /am-i-logged');
     if (Agenda.isRunning())
         ctx.body = `<h3>I'm ${Agenda.name}.</h3>`;
     else
@@ -48,7 +53,6 @@ router.get('/am-i-logged', (ctx, next)=> {
 });
 
 router.get('/api/operation', (ctx, next)=> {
-    console.log(ctx.query);
     if (Agenda.isRunning())
         switch (ctx.query['type']) {
             case 'o':
@@ -64,33 +68,28 @@ router.get('/api/operation', (ctx, next)=> {
                 ctx.body = Agenda.listAllUsers();
                 break;
             case 'cm':
-                if (Agenda.createMeeting(ctx.query.title, ctx.query.participators, ctx.query.startDate, ctx.query.endDate))
-                    ctx.body = '<p>success to create meeting</p>';
-                else
-                    ctx.boy = '<p>fail to create new meeting</p>';
+                ctx.body = Agenda.createMeeting(ctx.query);
                 break;
             case 'la':
-                ctx.body = Agenda.listMeetings(Agenda.isInMeeting);
+                ctx.body = Agenda.listMeetings(listTypes.All, Agenda.name);
                 break;
             case 'las':
-                ctx.body = Agenda.listMeetings(Agenda.isSponsor);
+                ctx.body = Agenda.listMeetings(listTypes.Sponsor, Agenda.name);
                 break;
             case 'lap':
-                ctx.body = Agenda.listMeetings(Agenda.isParticipator);
+                ctx.body = Agenda.listMeetings(listTypes.Participator, Agenda.name);
                 break;
             case 'qm':
-                ctx.body = Agenda.listMeetings(Agenda.isInMeeting).filter((meeting)=> {
+                ctx.body = Agenda.listMeetings(listTypes.All, Agenda.name).filter((meeting)=> {
                     let title = ctx.query.title || '';
                     return meeting.title === title;
                 });
                 break;
             case 'qt':
-                ctx.body = Agenda.listMeetings(Agenda.isInMeeting).filter((meeting)=> {
-                    // Date String : [yyyy-mm-dd hh-mm-ss]
-                    let start = new Date(ctx.query.startString) || new Date();
-                    let end = new Date(ctx.query.endString) || new Date();
-                    return start <= meeting.startDate && meeting.startDate <= end ||
-                        start <= meeting.endDate && meeting.endDate <= end;
+                ctx.body = Agenda.listMeetings(listTypes.All, Agenda.name).filter((meeting)=> {
+                    let start = new Date(ctx.query['start-date']);
+                    let end = new Date(ctx.query['end-date']);
+                    return !(end < meeting.startDate || meeting.endDate < start);
                 });
                 break;
             case 'dm':
@@ -100,16 +99,36 @@ router.get('/api/operation', (ctx, next)=> {
             default:
                 ctx.body = 'Your query string is not Valid!'
         }
-    else return next();
+    else
+        ctx.body = '[error] Please Sign In !';
 });
 
 
 app.use(router.routes()).use(router.allowedMethods());
+
+/**
+ * =========================== check logged ============================
+ */
 app.use(co.wrap(function *(ctx, next) {
+
     if (Agenda.isRunning()) {
-        yield next();
-    } else
-        ctx.body = '[fetch] you don\'t log in, please go to the / and log';
+        console.log('Running checked!');
+    } else {
+        console.log('unRunning checked!');
+    }
+    yield next();
+
 }));
-app.listen(PORT);
+
+/**
+ * =========================== static src ============================
+ */
+app.use(server('./assets'));
+
+try {
+    app.listen(PORT);
+} catch (error) {
+    console.log(`[error] ${e}`);
+}
+
 console.log(`The server is running at port: ${PORT}`);
